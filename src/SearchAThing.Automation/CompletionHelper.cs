@@ -62,7 +62,7 @@ namespace SearchAThing.Automation
                         Assembly.Load(typeof(Console).Assembly.GetName().Name),
                         Assembly.Load(typeof(TaskScheduler).Assembly.GetName().Name),
                         Assembly.Load(typeof(HostWorkspaceServices).Assembly.GetName().Name)
-                    };
+                    };                    
 
                     var cctx = new ContainerConfiguration()
                         .WithParts(MefHostServices.DefaultAssemblies.Concat(assemblies).Distinct()
@@ -155,7 +155,9 @@ namespace SearchAThing.Automation
         {
             CompletionItem = completionItem;
 
-            var t = CompletionItem.Properties.First(w => w.Key == "Symbols").Value;
+            if (CompletionItem.Tags.First() == "Keyword") return;
+
+            var t = CompletionItem.Properties.First(w => w.Key == "Symbols").Value;            
 
             if (t.Contains("|")) t = t.Split('|').First();
             if (t.Contains("(")) t = t.Substring(0, t.IndexOf('('));
@@ -243,6 +245,12 @@ namespace SearchAThing.Automation
 
             switch (MemberType)
             {
+                case "Keyword":
+                    {
+                        sb.Append($"[k] {CompletionText}");
+                    }
+                    break;
+
                 case "Property":
                     {
                         var pi = PropertyInfo;

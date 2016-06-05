@@ -62,7 +62,7 @@ namespace SearchAThing.Automation
                         Assembly.Load(typeof(Console).Assembly.GetName().Name),
                         Assembly.Load(typeof(TaskScheduler).Assembly.GetName().Name),
                         Assembly.Load(typeof(HostWorkspaceServices).Assembly.GetName().Name)
-                    };                    
+                    };
 
                     var cctx = new ContainerConfiguration()
                         .WithParts(MefHostServices.DefaultAssemblies.Concat(assemblies).Distinct()
@@ -157,7 +157,7 @@ namespace SearchAThing.Automation
 
             if (CompletionItem.Tags.First() == "Keyword") return;
 
-            var t = CompletionItem.Properties.First(w => w.Key == "Symbols").Value;            
+            var t = CompletionItem.Properties.First(w => w.Key == "Symbols").Value;
 
             if (t.Contains("|")) t = t.Split('|').First();
             if (t.Contains("(")) t = t.Substring(0, t.IndexOf('('));
@@ -239,6 +239,29 @@ namespace SearchAThing.Automation
             }
         }
 
+        public string FormattedMethodInfo(MethodInfo mi)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"{mi.ReturnType.Name} {MemberName}(");
+
+            var ps = mi.GetParameters();
+            for (int i = 0; i < ps.Length; ++i)
+            {
+                var p = ps[i];
+
+                if (p.HasDefaultValue) sb.Append("[ ");
+                sb.Append($"{p.ParameterType.Name} {p.Name}");
+                if (p.HasDefaultValue) sb.Append($" = {p.DefaultValue} ]");
+                
+                if (i != ps.Length - 1) sb.Append(", ");
+            }
+
+            sb.Append($")");
+
+            return sb.ToString();
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -269,19 +292,8 @@ namespace SearchAThing.Automation
 
                         for (int j = 0; j < mis.Length; ++j)
                         {
-                            var mi = mis[j];
-                            sb.Append($"[m]\t{mi.ReturnType.Name} {MemberName}(");
+                            sb.AppendLine($"[m]\t{FormattedMethodInfo(mis[j])}");
 
-                            var ps = mi.GetParameters();
-                            for (int i = 0; i < ps.Length; ++i)
-                            {
-                                var p = ps[i];
-
-                                sb.Append($"{p.ParameterType.Name} {p.Name}");
-                                if (i != ps.Length - 1) sb.Append(", ");
-                            }
-
-                            sb.Append($")");
                             if (j < mis.Length - 1) sb.AppendLine();
                         }
                     }

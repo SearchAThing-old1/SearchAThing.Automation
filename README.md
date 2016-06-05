@@ -2,6 +2,11 @@
 
 Automation helpers ( get completions using Roslyn )
 
+## Prerequisites
+
+- NET Framework 4.6
+- nuget feed : https://www.myget.org/F/roslyn-future-nightly
+
 ## Features
 
 - extract a list of information about suggestion coming from Roslyn CompletionService.GetService(...)

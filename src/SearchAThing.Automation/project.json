@@ -3,7 +3,8 @@
     "net46": { }
   },
   "runtimes": {
-    "win": { }
+    "win": { },
+    "win-x64": { }
   },
   "dependencies": {
     "Microsoft.CodeAnalysis.Workspaces.Common": "2.0.0-beta1-20160523-02",
